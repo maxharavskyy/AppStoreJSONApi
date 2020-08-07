@@ -12,12 +12,11 @@ import SDWebImage
 
 class SearchPageController: BaseListController, UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
 
+    var timer: Timer?
+    
     fileprivate let cellId = "123"
-    
     fileprivate let searchController = UISearchController(searchResultsController: nil)
-    
     fileprivate var appResults = [Result]()
-    
     fileprivate let entryLabeIfEmpty: UILabel = {
         let label = UILabel()
         label.text = "Please provide some search.."
@@ -25,37 +24,29 @@ class SearchPageController: BaseListController, UICollectionViewDelegateFlowLayo
         label.textAlignment = .center
         return label
     }()
+    
     override func viewDidLoad() {
-   
         super.viewDidLoad()
         collectionView.addSubview(entryLabeIfEmpty)
+        collectionView.backgroundColor = .white
+        collectionView.register(SearchResultCell.self, forCellWithReuseIdentifier: cellId)
+        
         entryLabeIfEmpty.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             entryLabeIfEmpty.topAnchor.constraint(equalTo: view.topAnchor, constant: 220),
-//             entryLabelForEmpty.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-             entryLabeIfEmpty.leadingAnchor.constraint(equalTo: view.leadingAnchor ),
-             entryLabeIfEmpty.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        
+            entryLabeIfEmpty.leadingAnchor.constraint(equalTo: view.leadingAnchor ),
+            entryLabeIfEmpty.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
-
-        collectionView.backgroundColor = .white
-        collectionView.register(SearchResultCell.self, forCellWithReuseIdentifier: cellId)
+        
         setupSearchBar()
-    
     }
    
-
-    
-    
-    
     fileprivate func setupSearchBar() {
         navigationItem.searchController = self.searchController
-//        searchController.searchBar.isHidden = false
         navigationItem.hidesSearchBarWhenScrolling = false
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.delegate = self
     }
-    var timer: Timer?
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         timer?.invalidate()
@@ -69,9 +60,6 @@ class SearchPageController: BaseListController, UICollectionViewDelegateFlowLayo
         })
     }
     
-    
-    
-
     fileprivate func  fetchItunesApps() {
         Service.shared.fetchSearch(searchTerm: "") { (results, error)  in
 
@@ -83,7 +71,6 @@ class SearchPageController: BaseListController, UICollectionViewDelegateFlowLayo
                 self.collectionView.reloadData()
             }
         }
-
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -101,9 +88,4 @@ class SearchPageController: BaseListController, UICollectionViewDelegateFlowLayo
         entryLabeIfEmpty.isHidden = appResults.count != 0
         return appResults.count
     }
-    
-    
-    
-    
-    
 }

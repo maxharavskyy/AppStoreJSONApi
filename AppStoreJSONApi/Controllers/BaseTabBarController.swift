@@ -10,22 +10,14 @@ import UIKit
 
 class BaseTabBarController: UITabBarController {
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .orange
-        
-        
-        
         let greenViewController = UIViewController()
-
         viewControllers = [
             createNavController(viewController: AppsPageController(), title: "Apps", image: "apps"),
             createNavController(viewController: SearchPageController(), title: "Search", image: "search" ),
             createNavController(viewController: greenViewController, title: "Today", image: "today_icon")
         ]
-    
     }
     
     fileprivate func createNavController(viewController: UIViewController, title: String, image: String) -> UIViewController {
@@ -35,9 +27,7 @@ class BaseTabBarController: UITabBarController {
         navController.tabBarItem.title = title
         navController.tabBarItem.image = UIImage(named: image)
         navController.navigationBar.prefersLargeTitles = true
-        
         return navController
         
     }
-    
 }

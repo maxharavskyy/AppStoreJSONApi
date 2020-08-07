@@ -12,12 +12,8 @@ class AppsPageHeader: UICollectionReusableView {
    
     let appsHeaderHorizontalController = AppsHeaderHorizontalController()
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-      
-        
         addSubview(appsHeaderHorizontalController.view)
         appsHeaderHorizontalController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -26,13 +22,10 @@ class AppsPageHeader: UICollectionReusableView {
             appsHeaderHorizontalController.view.leadingAnchor.constraint(equalTo: leadingAnchor),
             appsHeaderHorizontalController.view.trailingAnchor.constraint(equalTo: trailingAnchor)
          ])
-        
         appsHeaderHorizontalController.view.backgroundColor = .green
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
 }

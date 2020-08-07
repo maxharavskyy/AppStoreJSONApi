@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 
 class AppsPageController: BaseListController, UICollectionViewDelegateFlowLayout {
@@ -22,21 +23,15 @@ class AppsPageController: BaseListController, UICollectionViewDelegateFlowLayout
         return indicator
     }()
     
-    
-
     var sectionGroup = [AppsGroup]()
-    var tvShows: TVShows?
-    
+    var socialApps = [SocialApp]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        collectionView.addSubview(activityIndicatorView)
         collectionView.backgroundColor = UIColor(white: 0.85, alpha: 0.5)
-        
-
         collectionView.register(AppsGroupCell.self, forCellWithReuseIdentifier: cellId)
         collectionView.register(AppsPageHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
-        collectionView.addSubview(activityIndicatorView)
         
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -46,12 +41,9 @@ class AppsPageController: BaseListController, UICollectionViewDelegateFlowLayout
             activityIndicatorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
         fetchData()
-        
     }
     
-    
     func fetchData() {
-        
         let group = DispatchGroup()
         var group1: AppsGroup?
         var group2: AppsGroup?
@@ -73,12 +65,13 @@ class AppsPageController: BaseListController, UICollectionViewDelegateFlowLayout
             group3 = res
         }
         group.enter()
-        Service.shared.fetchTVShows { (res, err) in
+        AlamofireNetworkRequest.sendRequest(onSucess: { (apps) in
             group.leave()
-            self.tvShows = res
-            self.tvShows!.feed.results.forEach({print($0.artistName)})
+            guard let apps = apps else {return}
+            self.socialApps = apps
+        }) {
+            print("error alamofire fetching request")
         }
-        
         
         group.notify(queue: .main) {
             self.activityIndicatorView.stopAnimating()
@@ -91,12 +84,10 @@ class AppsPageController: BaseListController, UICollectionViewDelegateFlowLayout
             if let group = group3 {
             self.sectionGroup.append(group)
             }
-            
             self.collectionView.reloadData()
         }
-        
-        
     }
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! AppsGroupCell
         let data = sectionGroup[indexPath.item]
@@ -108,8 +99,6 @@ class AppsPageController: BaseListController, UICollectionViewDelegateFlowLayout
             self?.navigationController?.pushViewController(detailController, animated: true)
             detailController.navigationItem.title = feedResult.name
         }
-        
-        
         return cell
     }
     
@@ -120,22 +109,20 @@ class AppsPageController: BaseListController, UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return.init(width: collectionView.frame.width-16 , height: 300)
     }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return.init(top: 8, left: 16, bottom: 0, right: 0)
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! AppsPageHeader
-        header.appsHeaderHorizontalController.tvsShows = tvShows
+        header.appsHeaderHorizontalController.socialApps = self.socialApps
         header.appsHeaderHorizontalController.collectionView.reloadData()
-        
         return header
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return .init(width: collectionView.frame.width, height: 300)
     }
-    
-    
     
 }

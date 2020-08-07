@@ -53,10 +53,7 @@ class AppsHorizontalCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-                
         let stackView = UIStackView(arrangedSubviews: [appIcon, VerticalStackView(arrangedSubviews: [nameLabel, companyLabel],spacing: 4), getButton])
-        
         addSubview(stackView)
         
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -65,18 +62,12 @@ class AppsHorizontalCell: UICollectionViewCell {
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-        
         ])
         stackView.alignment = .center
         stackView.spacing = 16
-        
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    
 }
